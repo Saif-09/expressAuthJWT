@@ -6,7 +6,7 @@ import transporter from "../config/emailConfig.js";
 class UserController {
   static userRegistration = async (req, res) => {
     //these data we are getting from FE and we're handling it here in BE
-    const { name, email, password, password_confirmation, tc } = req.body;
+    const { name, email, password, password_confirmation } = req.body;
 
     //For making sure that the email which the user is using is used onlyonce
     const user = await UserModel.findOne({ email: email }); //the lhs email is in DB and rhs email we're getting from the FE and we are confirming that if there is already same email exists or not, and if there is an email already exists it will be stored in "user"
@@ -14,7 +14,7 @@ class UserController {
       res.send({ status: "failed", message: "Email already exists" });
     } else {
       //We're now checking that all the fields from FE have required data or not
-      if (name && email && password && password_confirmation && tc) {
+      if (name && email && password && password_confirmation ) {
         //We're now checking that the password and password_confirmation match
         if (password === password_confirmation) {
           try {
@@ -26,7 +26,7 @@ class UserController {
               name: name,
               email: email,
               password: hashPassword,
-              tc: tc,
+              // tc: tc,
             });
             //We are now saving the doc in DB, doc is the new user
             await doc.save();
