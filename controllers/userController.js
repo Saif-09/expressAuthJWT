@@ -29,14 +29,20 @@ class UserController {
             });
             //We are now saving the doc in DB, doc is the new user
             await doc.save();
-            const saved_user = await UserModel.findOne({ email: email })
+            const saved_user = await UserModel.findOne({ email: email });
             //We are now generating a JWT token for the user and sending it to the FE
             const token = jwt.sign(
               { userID: saved_user._id },
               process.env.JWT_SECRET_KEY,
               { expiresIn: "5d" }
-            )
-            res.status(201).send({status: "success",message: "Registration Sucess",token: token,});
+            );
+            res
+              .status(201)
+              .send({
+                status: "success",
+                message: "Registration Sucess",
+                token: token,
+              });
           } catch (error) {
             console.log(error);
             res.send({ status: "failed", message: "Unable to register" });
@@ -51,7 +57,7 @@ class UserController {
         res.send({ status: "failed", message: "Please fill all the fields" });
       }
     }
-  }
+  };
   static userLogin = async (req, res) => {
     try {
       //check e-mail and password is entered or not
@@ -67,13 +73,17 @@ class UserController {
           );
           if (user.email === email && isPasswordCorrect) {
             //We are now generating a JWT token for the user and sending it to the FE
-            
+
             const token = jwt.sign(
-                { userID: user._id },
-                process.env.JWT_SECRET_KEY,
-                { expiresIn: '5d' }
-              )
-            res.send({ "status": "success", "message": "Login Successfull","token":token });
+              { userID: user._id },
+              process.env.JWT_SECRET_KEY,
+              { expiresIn: "5d" }
+            );
+            res.send({
+              status: "success",
+              message: "Login Successfull",
+              token: token,
+            });
           } else {
             //if any of the conditions are not met, then we are sending the user to the login page
             res.send({
@@ -91,11 +101,25 @@ class UserController {
       }
     } catch (error) {
       console.log(error);
-      res.send({ status: "failed", message: "Unable tp login" });
+      res.send({ status: "failed", message: "Unable to login" });
     }
   };
 
-  static changeUserPassword
+  static changeUserPassword = async (req, res) => {
+    const { password, password_confirmation } = req.body;
+    if (password && password_confirmation) {
+        if(password!==password_confirmation){
+            res.send({ status: "failed", message: "Password doesn't match" });
+
+        }else{
+            const salt = await bcrypt.genSalt(10)
+            const newHashPassword = await bcrypt.hash(password, salt)
+
+        }
+    } else {
+      res.send({ status: "failed", message: "All fields are required" });
+    }
+  };
 }
 //exporting class, if you have to use function in it then we can write UserController.userRegistration
 export default UserController;

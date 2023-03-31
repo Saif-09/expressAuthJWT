@@ -12,6 +12,7 @@ router.post('/login', UserController.userLogin)
 
 
 //Private Routes - Login required
+router.post('/changepassword', UserController.changeUserPassword)
 
 
 
