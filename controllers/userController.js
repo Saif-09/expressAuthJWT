@@ -109,17 +109,19 @@ class UserController {
     const { password, password_confirmation } = req.body;
     if (password && password_confirmation) {
         if(password!==password_confirmation){
-            res.send({ status: "failed", message: "Password doesn't match" });
+            res.send({ "status": "failed", "message": "New Password and Confirm New Passoword doesn't match" });
 
         }else{
             const salt = await bcrypt.genSalt(10)
             const newHashPassword = await bcrypt.hash(password, salt)
+            await UserModel.findByIdAndUpdate(req.user._id,{$set:{password: newHashPassword}})
+            res.send({ "status": "success", "message": "Password changed successfully" });
 
         }
     } else {
-      res.send({ status: "failed", message: "All fields are required" });
+      res.send({ "status": "failed", "message": "All fields are required" });
     }
-  };
+  }
 }
 //exporting class, if you have to use function in it then we can write UserController.userRegistration
 export default UserController;
