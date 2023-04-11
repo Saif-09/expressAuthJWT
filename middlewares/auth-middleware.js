@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import UserModel from '../models/User.js'
+
 //Created middleware to verify user has been logined or not/ has token or not
 var checkUserAuth = async(req,res,next)=>{
     let token
